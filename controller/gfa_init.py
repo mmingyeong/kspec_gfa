@@ -7,10 +7,11 @@
 
 import pypylon.pylon as py
 import logging
+import time
 import matplotlib.pyplot as plt
 
-from gfa_log import GFA_Logger
-from exceptions import GFAInitError, GFAInitConnectCameraError, GFAInitOpenCameraError, GFAInitGrabError, GFAInitGrabImageError
+from .gfa_log import GFA_Logger
+from .exceptions import GFAInitError, GFAInitConnectCameraError, GFAInitOpenCameraError, GFAInitGrabError, GFAInitGrabImageError
 
 __all__ = ["gfa_init"]
 
@@ -28,25 +29,17 @@ class gfa_init():
         try:
             logger.info('Connect the KSPEC GFA cameras')
             
+            NUM_CAMERAS = 7
+            TEST_NUM_CAMERAS = 3
+            
             tlf = py.TlFactory.GetInstance()
             devices = tlf.EnumerateDevices()
-            self.cameras = {}       # list or dict?
+            if len(devices) == 0:
+                raise py.RuntimeException("No camera present.")
             
-            cam1 = py.InstantCamera(tlf.CreateDevice(devices[0]))
-            logger.info(f'Cam1 check {cam1}')
-            cam2 = py.InstantCamera(tlf.CreateDevice(devices[1]))
-            logger.info(f'Cam2 check {cam2}')
-            cam3 = py.InstantCamera(tlf.CreateDevice(devices[2]))
-            logger.info(f'Cam3 check {cam3}')
-            #cam4 = cameras[3]
-            #cam5 = cameras[4]
-            #cam6 = cameras[5]
-            #cam7 = cameras[6]
-            
-            self.cameras["cam1"] = cam1
-            self.cameras["cam2"] = cam2
-            self.cameras["cam3"] = cam3
-            
+            self.cam_array = py.InstantCameraArray(NUM_CAMERAS)
+            logger.info(f"{self.cam_array}")
+            logger.info(f'Cam array check')
         
         except GFAInitConnectCameraError as err:
             logger.error(err)
@@ -54,51 +47,40 @@ class gfa_init():
         logger.info('Connected the KSPEC GFA cameras')
         logger.info('Done')
         
-        return self.cameras
+        return self.cam_array
 
     def gfa_init_exposure(self, ExposureTime):
         
         try:
             logger.info('Start Exposure Initializaton')
             
-            cam1 = self.cameras["cam1"]
-            cam2 = self.cameras["cam2"]
-            cam3 = self.cameras["cam3"]
-            
             logger.info('Open Cams')
-            cam1.Open()
-            cam2.Open()
-            cam3.Open()
-            
+            for i, cam in enumerate(self.cam_array):
+                cam.Open()
+                logger.info("Using device ", cam.GetDeviceInfo().GetModelName())
+                
+            #self.cam_array.Open()
+            l = self.cam_array.GetSize()
+
+            # Create and attach all Pylon Devices.
+            for i, cam in enumerate(self.cam_array):
+                logger.info("Using device ", cam.GetDeviceInfo().GetModelName())
             logger.info('check')
 
         except GFAInitOpenCameraError as err:
             logger.error(err)
             
         try:
-            logger.info('Grab ready?')
-            cam1.TriggerSelector = 'ExposureStart'
-            cam1.TriggerSource = "Line1"
-            cam2.TriggerSelector = 'ExposureStart'
-            cam2.TriggerSource = "Line1"
-            cam3.TriggerSelector = 'ExposureStart'
-            cam3.TriggerSource = "Line1"
-            
-            cam1.PixelFormat.SetValue("Mono8")
-            cam3.PixelFormat.SetValue("Mono8")
-            cam3.PixelFormat.SetValue("Mono8")
-            logger.info('Grab ready.')
-            
             logger.info('Cam1 Grab')
-            cam1_res = cam1.GrabOne(ExposureTime)  # 1 sec
+            cam1_res = self.cam_array[0].GrabOne(ExposureTime)  # 1 sec
             logger.info('check')
             
             logger.info('Cam2 Grab')
-            cam2_res = cam2.GrabOne(ExposureTime)  # 1 sec
+            cam2_res = self.cam_array[1].GrabOne(ExposureTime)  # 1 sec
             logger.info('check')
             
             logger.info('Cam3 Grab')
-            cam3_res = cam3.GrabOne(ExposureTime)  # 1 sec
+            cam3_res = self.cam_array[2].GrabOne(ExposureTime)  # 1 sec
             logger.info('check')
 
         except GFAInitGrabError as err:
@@ -121,8 +103,14 @@ class gfa_init():
             logger.error(err)
             
         logger.info('Done')
-        plt.imshow(img_list[0])
-        plt.savefig('test.png')
+        
+        now = time
+        now_time = now.strftime('%Y-%m-%d_%H:%M:%S')
+
+        for i in range(len(img_list)):
+            plt.imshow(img_list[i])
+            plt.savefig(f'./img_saved/{now_time}_cam{i}_img.png')
+        
         return img_list
         
     def gfa_init_set_ready(self):

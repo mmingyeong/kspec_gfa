@@ -19,14 +19,16 @@ class GFA_Logger:
             formatter = logging.Formatter(u'%(asctime)s [%(levelname)s] %(message)s')
             stream_handler = logging.StreamHandler()
             stream_handler.setFormatter(formatter)
+            stream_handler.setLevel(logging.ERROR)
 
             self.logger.addHandler(stream_handler)
-            self.logger.setLevel(logging.ERROR)
+            #self.logger.setLevel(logging.ERROR)
             
             # FileHandler
             log_name = self.file_name.rstrip('.py')
-            file_handler = logging.FileHandler(f'./{log_name}.log')
+            file_handler = logging.FileHandler(f'./controller/log/{log_name}.log')
             file_handler.setFormatter(formatter)
+            file_handler.setLevel(logging.INFO)
 
             self.logger.addHandler(file_handler)
             self.logger.setLevel(logging.INFO)
