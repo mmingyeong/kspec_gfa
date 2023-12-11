@@ -21,7 +21,7 @@ class GFA_Logger:
             stream_handler.setFormatter(formatter)
 
             self.logger.addHandler(stream_handler)
-            stream_handler.setLevel(logging.ERROR)
+            self.logger.setLevel(logging.ERROR)
             
             # FileHandler
             log_name = self.file_name.rstrip('.py')
@@ -29,7 +29,7 @@ class GFA_Logger:
             file_handler.setFormatter(formatter)
 
             self.logger.addHandler(file_handler)
-            file_handler.setLevel(logging.INFO)
+            self.logger.setLevel(logging.INFO)
 
     def info(self, value):
         self.logger.info("%s (at %s)" % (str(value), self.file_name))

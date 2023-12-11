@@ -7,6 +7,7 @@
 
 import pypylon.pylon as py
 import logging
+import matplotlib.pyplot as plt
 
 from gfa_log import GFA_Logger
 from exceptions import GFAInitError, GFAInitConnectCameraError, GFAInitOpenCameraError, GFAInitGrabError, GFAInitGrabImageError
@@ -120,7 +121,8 @@ class gfa_init():
             logger.error(err)
             
         logger.info('Done')
-        
+        plt.imshow(img_list[0])
+        plt.savefig('test.png')
         return img_list
         
     def gfa_init_set_ready(self):
