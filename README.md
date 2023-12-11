@@ -1,7 +1,7 @@
 
-The KSPEC GFA Camera Controller
-The Controller communicate with Basler Guide cameras for guiding and focusing processes.
-The Controller use the [pypylon](https://github.com/basler/pypylon) library as the middleware for the communication.
+# The KSPEC GFA Camera Controller
+- The Controller communicate with Basler Guide cameras for guiding and focusing processes.
+- The Controller use the [pypylon](https://github.com/basler/pypylon) library as the middleware for the communication.
 
 # Getting Started
 
