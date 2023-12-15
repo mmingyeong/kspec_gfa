@@ -9,6 +9,7 @@ import pypylon.pylon as py
 import logging
 import time
 import matplotlib.pyplot as plt
+import os
 
 from .gfa_log import GFA_Logger
 from .exceptions import GFAInitError, GFAInitConnectCameraError, GFAInitOpenCameraError, GFAInitGrabError, GFAInitGrabImageError
@@ -29,17 +30,60 @@ class gfa_init():
         try:
             logger.info('Connect the KSPEC GFA cameras')
             
-            NUM_CAMERAS = 7
-            TEST_NUM_CAMERAS = 3
+            cam1_ip = '192.168.100.2' # 3834
+            cam2_ip = '192.168.101.2' # 3833
+            cam3_ip = '192.168.102.2' # 3831
+            self.cams_ready = []
             
+            logger.info('Cam1 Ready?')
+            # Get the transport layer factory.
             tlf = py.TlFactory.GetInstance()
-            devices = tlf.EnumerateDevices()
-            if len(devices) == 0:
-                raise py.RuntimeException("No camera present.")
+            tl = tlf.CreateTl('BaslerGigE')
+            cam1_info_ip = tl.CreateDeviceInfo()
+            cam1_info_ip.SetIpAddress(cam1_ip)
+            cam1 = py.InstantCamera(tlf.CreateDevice(cam1_info_ip))
             
-            self.cam_array = py.InstantCameraArray(NUM_CAMERAS)
-            logger.info(f"{self.cam_array}")
-            logger.info(f'Cam array check')
+            # Get fullname
+            fullname = cam1.GetDeviceInfo().GetFullName()
+            
+            # Create cam using fullname
+            cam1_info_fullname = tl.CreateDeviceInfo()
+            cam1_info_fullname.SetFullName(fullname)
+            cam1_ready = py.InstantCamera(tlf.CreateDevice(cam1_info_fullname))
+            self.cams_ready.append(cam1_ready)
+            logger.info('Cam1 Ready.')
+
+            logger.info('Cam2 Ready?')
+            # Get the transport layer factory.
+            cam2_info_ip = tl.CreateDeviceInfo()
+            cam2_info_ip.SetIpAddress(cam2_ip)
+            cam2 = py.InstantCamera(tlf.CreateDevice(cam2_info_ip))
+            
+            # Get fullname
+            fullname = cam2.GetDeviceInfo().GetFullName()
+            
+            # Create cam using fullname
+            cam2_info_fullname = tl.CreateDeviceInfo()
+            cam2_info_fullname.SetFullName(fullname)
+            cam2_ready = py.InstantCamera(tlf.CreateDevice(cam2_info_fullname))
+            self.cams_ready.append(cam2_ready)
+            logger.info('Cam2 Ready.')
+            
+            logger.info('Cam3 Ready?')
+            # Get the transport layer factory.
+            cam3_info_ip = tl.CreateDeviceInfo()
+            cam3_info_ip.SetIpAddress(cam3_ip)
+            cam3 = py.InstantCamera(tlf.CreateDevice(cam3_info_ip))
+            
+            # Get fullname
+            fullname = cam3.GetDeviceInfo().GetFullName()
+            
+            # Create cam using fullname
+            cam3_info_fullname = tl.CreateDeviceInfo()
+            cam3_info_fullname.SetFullName(fullname)
+            cam3_ready = py.InstantCamera(tlf.CreateDevice(cam3_info_fullname))
+            self.cams_ready.append(cam3_ready)
+            logger.info('Cam3 Ready.')
         
         except GFAInitConnectCameraError as err:
             logger.error(err)
@@ -47,71 +91,50 @@ class gfa_init():
         logger.info('Connected the KSPEC GFA cameras')
         logger.info('Done')
         
-        return self.cam_array
+        return self.cams_ready
 
     def gfa_init_exposure(self, ExposureTime):
         
+        cam1 = self.cams_ready[0]
+        cam2 = self.cams_ready[1]
+        cam3 = self.cams_ready[2]
+        
         try:
-            logger.info('Start Exposure Initializaton')
-            
-            logger.info('Open Cams')
-            for i, cam in enumerate(self.cam_array):
+            logger.info('Start Exposure Check')
+            logger.info('Open Cam')
+            for cam in self.cams_ready:
                 cam.Open()
-                logger.info("Using device ", cam.GetDeviceInfo().GetModelName())
-                
-            #self.cam_array.Open()
-            l = self.cam_array.GetSize()
-
-            # Create and attach all Pylon Devices.
-            for i, cam in enumerate(self.cam_array):
-                logger.info("Using device ", cam.GetDeviceInfo().GetModelName())
-            logger.info('check')
+            logger.info('check')        
 
         except GFAInitOpenCameraError as err:
             logger.error(err)
-            
+    
         try:
-            logger.info('Cam1 Grab')
-            cam1_res = self.cam_array[0].GrabOne(ExposureTime)  # 1 sec
-            logger.info('check')
-            
-            logger.info('Cam2 Grab')
-            cam2_res = self.cam_array[1].GrabOne(ExposureTime)  # 1 sec
-            logger.info('check')
-            
-            logger.info('Cam3 Grab')
-            cam3_res = self.cam_array[2].GrabOne(ExposureTime)  # 1 sec
-            logger.info('check')
+            img_list = []
+        
+            logger.info('Cam1 Grab One Image')
+            cam1.ExposureTime.SetValue(ExposureTime)
+            logger.info(f"Exposure Time, {cam1.ExposureTime.Value} milisec")
+            res1 = cam1.GrabOne(1000)
+            img1 = res1.GetArray()
+            img_list.append(img1)
 
         except GFAInitGrabError as err:
             logger.error(err)
-            
-        try:
-            logger.info('Save image array')
-            cam1_img = cam1_res.GetArray()
-            cam2_img = cam2_res.GetArray()
-            cam3_img = cam3_res.GetArray()
 
-            img_list = []
-            img_list.append(cam1_img)
-            img_list.append(cam2_img)
-            img_list.append(cam3_img)
-            logger.info('Saved image array')
-            # ? 이미지 array를 저장하는게 아니라 fit file로 return 해야 하는지?
-            
-        except GFAInitGrabImageError as err:
-            logger.error(err)
-            
-        logger.info('Done')
+        # ? 이미지 array를 저장하는게 아니라 fit file로 return 해야 하는지?
         
         now = time
         now_time = now.strftime('%Y-%m-%d_%H:%M:%S')
-
+        
         for i in range(len(img_list)):
             plt.imshow(img_list[i])
-            plt.savefig(f'./img_saved/{now_time}_cam{i}_img.png')
-        
+            index = i + 1
+            plt.savefig(f'/home/kspec/mingyeong/gfa_controller/controller/img_saved/{now_time}_cam{index}_img.png')
+            
+        logger.info('Done')
+
         return img_list
-        
+
     def gfa_init_set_ready(self):
         pass
