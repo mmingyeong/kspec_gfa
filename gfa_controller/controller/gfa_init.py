@@ -11,12 +11,12 @@ import time
 import matplotlib.pyplot as plt
 import os
 
-from .gfa_log import GFA_Logger
+from .gfa_log import gfa_logger
 from .exceptions import GFAInitError, GFAInitConnectCameraError, GFAInitOpenCameraError, GFAInitGrabError, GFAInitGrabImageError
 
 __all__ = ["gfa_init"]
 
-logger = GFA_Logger(__file__)
+logger = gfa_logger(__file__)
 
 class gfa_init():
     """initialization to start the GFA sequence normally"""
@@ -30,9 +30,9 @@ class gfa_init():
         try:
             logger.info('Connect the KSPEC GFA cameras')
             
-            cam1_ip = '192.168.100.2' # 3834
-            cam2_ip = '192.168.101.2' # 3833
-            cam3_ip = '192.168.102.2' # 3831
+            cam1_ip = '192.168.9.3' # 3834
+            cam2_ip = '192.168.8.3' # 3833
+            cam3_ip = '192.168.10.3' # 3831
             self.cams_ready = []
             
             logger.info('Cam1 Ready?')
@@ -114,8 +114,8 @@ class gfa_init():
         
             logger.info('Cam1 Grab One Image')
             cam1.ExposureTime.SetValue(ExposureTime)
-            logger.info(f"Exposure Time, {cam1.ExposureTime.Value} milisec")
-            res1 = cam1.GrabOne(1000)
+            logger.info(f"Exposure Time, {cam1.ExposureTime.Value} micro sec")
+            res1 = cam1.GrabOne(100000)
             img1 = res1.GetArray()
             img_list.append(img1)
 

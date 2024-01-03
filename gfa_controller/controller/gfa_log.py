@@ -9,9 +9,9 @@ import os
 import logging
 
 # Logger 정의
-class GFA_Logger:
+class gfa_logger:
     def __init__(self, file):
-        self.logger = logging.getLogger("GFA_Logger")
+        self.logger = logging.getLogger("gfa_logger")
         self.file_name = os.path.basename(file)
 
         if len(self.logger.handlers) == 0:
