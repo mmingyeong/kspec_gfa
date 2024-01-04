@@ -2,31 +2,28 @@
 # -*- coding: utf-8 -*-
 #
 # @Author: Mingyeong Yang (mmingyeong@kasi.re.kr)
-# @Date: 2023-01-03
-# @Filename: status.py
+# @Date: 2023-01-04
+# @Filename: offset.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
-from controller.gfa_controller import gfa_controller
+from controller.gfa_guiding import gfa_guiding
 
 import click
 import time
 
 @click.command()
-@click.option('-n', '--num', type=click.INT, required=False, default=0, show_default=True)
-def status(num:int):
-    """Returns the camera status."""
+def offset():
+    """Returns the offset value."""
     
     now1 = time.time()
     lt = time.localtime(now1)
     formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
     
-    controller = gfa_controller("controller")
-    status = controller.status(num)
-    click.echo(status)
+    click.echo("Guiding process")
     
     now2 = time.time()
     lt = time.localtime(now2)
@@ -34,4 +31,4 @@ def status(num:int):
     print("process time:", now2-now1)
     
 if __name__ == '__main__':
-    status()
+    offset()

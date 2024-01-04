@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 import os
 import yaml
 
-from .gfa_log import gfa_logger
-from .gfa_config import gfa_config
+from ..gfa_log import gfa_logger
+from ..gfa_config import gfa_config
 
 __all__ = ["gfa_controller"]
 
@@ -51,7 +51,7 @@ class gfa_controller():
         now1 = time.time()
         lt = time.localtime(now1)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func start", formatted)
+        print("Func start", formatted)
         status_result = {}
         if not CamNum==0:
             Cam_name = self.cameras_info[f"Cam{CamNum}"]["Name"]
@@ -75,95 +75,101 @@ class gfa_controller():
         now2 = time.time()
         lt = time.localtime(now2)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func done", formatted)
-        #print("process time:", now2-now1)
+        print("Func done", formatted)
+        print("process time:", now2-now1)
         
         return status_result
     
-    def ready(self, CamNum:int):
+    def ready(self):
         """ready to open and close"""
-        #print("start to ready")
+        print("start to ready")
         now1 = time.time()
         lt = time.localtime(now1)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func start", formatted)
+        print("Func start", formatted)
         cam_ready_dict = {}
         
-        # Cam Info check
-        Cam_name = self.cameras_info[f"Cam{CamNum}"]["Name"]
-        Cam_IpAddress = self.cameras_info[f"Cam{CamNum}"]["IpAddress"]
-        
-        # Get the transport layer factory.
-        cam_info_ip = self.tl.CreateDeviceInfo()
-        cam_info_ip.SetIpAddress(Cam_IpAddress)
-        cam = py.InstantCamera(self.tlf.CreateDevice(cam_info_ip))
+        for cam in self.camera_list:
+            # Cam Info check
+            Cam_name = self.cameras_info[cam]["Name"]
+            Cam_IpAddress = self.cameras_info[cam]["IpAddress"]
+            
+            # Get the transport layer factory.
+            cam_info_ip = self.tl.CreateDeviceInfo()
+            cam_info_ip.SetIpAddress(Cam_IpAddress)
+            cam = py.InstantCamera(self.tlf.CreateDevice(cam_info_ip))
 
-        # Get fullname
-        fullname = cam.GetDeviceInfo().GetFullName()
-        
-        # Create cam using fullname
-        cam_info_fullname = self.tl.CreateDeviceInfo()
-        cam_info_fullname.SetFullName(fullname)
-        cam_ready = py.InstantCamera(self.tlf.CreateDevice(cam_info_fullname))
-        cam_ready_dict[Cam_name] = cam_ready
+            # Get fullname
+            fullname = cam.GetDeviceInfo().GetFullName()
+            
+            # Create cam using fullname
+            cam_info_fullname = self.tl.CreateDeviceInfo()
+            cam_info_fullname.SetFullName(fullname)
+            cam_ready = py.InstantCamera(self.tlf.CreateDevice(cam_info_fullname))
+            cam_ready_dict[Cam_name] = cam_ready
 
         now2 = time.time()
         lt = time.localtime(now2)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func done", formatted)
-        #print("process time:", now2-now1)
+        print("Func done", formatted)
+        print("process time:", now2-now1)
         
-        return cam_ready
+        return cam_ready_dict
         
-    def open(self, ready):
+    def open(self, ready:dict):
         """Open the camera connection"""
-        #print("start to open")
+        print("start to open")
         now1 = time.time()
         lt = time.localtime(now1)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func start", formatted)
-
-        ready.Open()
+        print("Func start", formatted)
+        
+        keys = list(ready.keys())
+        for key in keys:
+            cam = ready[key]
+            cam.Open()
             
         now2 = time.time()
         lt = time.localtime(now2)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func done", formatted)
-        #print("process time:", now2-now1)
+        print("Func done", formatted)
+        print("process time:", now2-now1)
     
-    def close(self, ready):
+    def close(self, ready:dict):
         """Close the camera connection"""
-        #print("start to close")
+        print("start to close")
         now1 = time.time()
         lt = time.localtime(now1)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func start", formatted)
+        print("Func start", formatted)
         
-        ready.Close()
+        keys = list(ready.keys())
+        for key in keys:
+            cam = ready[key]
+            cam.Close()
 
         now2 = time.time()
         lt = time.localtime(now2)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func done", formatted)
-        #print("process time:", now2-now1)
+        print("Func done", formatted)
+        print("process time:", now2-now1)
     
-    def grab(self, ready, CamNum, ExpTime):
+    def grab(self, ready:dict, CamNum: int, ExpTime):
         """ExpTime: Microsecond"""
         now1 = time.time()
         lt = time.localtime(now1)
-        formatted = time.strftime("%Y-%m-%d_%H:%M:%S", lt)
+        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
         
-        cam = ready
-        ExpTime_microsec = ExpTime * 1000000
-        cam.ExposureTime.SetValue(ExpTime_microsec)
+        cam_name = f"GFA Camera {CamNum}"
+        cam = ready[cam_name]
+        cam.ExposureTime.SetValue(ExpTime)
         res = cam.GrabOne(100000)
         img = res.GetArray()
         plt.imshow(img)
-        plt.savefig(f'/home/kspec/mingyeong/gfa_controller/gfa_controller/controller/img_saved/{formatted}_cam{CamNum}_img.png')
+        plt.savefig(f'/home/kspec/mingyeong/gfa_controller/controller/img_saved/{formatted}_cam{CamNum}_img.png')
 
         now2 = time.time()
         lt = time.localtime(now2)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        #print("Func done", formatted)
-        #print("Exposure Time time:", ExpTime)
-        #print("grab process time:", now2-now1)
+        print("Func done", formatted)
+        print("process time:", now2-now1)
