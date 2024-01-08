@@ -35,3 +35,5 @@ python grab.py --help
 ```
 
 ## Software Architecture
+
+![img](./docs/sphinx/source/_static/kspec-gfa_software_architecture.png)
