@@ -1,12 +1,17 @@
+.. _getting-started:
 
-# The KSPEC GFA Camera Controller
+Getting started
+===============
+
+Introduction
+-------------
+
 - KSPEC-GFA is a tool for guiding, focusing, and acquisition sequence control in KSPEC observation.
 - The Controller communicate with Basler Guide cameras for guiding and focusing processes.
 - The Controller use the [pypylon](https://github.com/basler/pypylon) library as the middleware for the communication.
 
-# Getting Started
-
-## Installation
+Installation
+-------------
 
 `kspec-gfa` can be installed using by cloning this repository
 
@@ -21,15 +26,15 @@ cd kspec-gfa
 poetry install
 ```
 
-## Quick Start
+Hardware Components
+-------------------
 
-```console
-cd python/kspec-gfa/commander
-python status.py
-```
+We plan to add it later.
 
-If you want to know the usage of each command, use --help option.
+Architecture
+------------
 
-```console
-python grab.py --help
-```
+Here is the Software Architecture diagram explaining the hierarchy of KSPEC-GFA.
+
+.. image:: _static/kspec-gfa_software_architecture.png
+    :align: center

@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "kspec-gfa"
+version = "0.1.0"
+description = "KSPEC-GFA is a tool for guiding, focusing, and acquisition sequence control in KSPEC observation."
+authors = ["Mingyeong <mmingyeong@kasi.re.kr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+click = "^8.1.7"
+pypylon = "^3.0.1"
+logging = "^0.4.9.6"
+matplotlib = "^3.8.2"
+pyyaml = "^6.0.1"
+sphinx = "^7.2.6"
+sphinx-rtd-theme = "^2.0.0"
+make = "^0.1.6.post2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+# [tool.poetry.scripts]
