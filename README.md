@@ -36,4 +36,6 @@ python grab.py --help
 
 ## Software Architecture
 
+Here is the Software Architecture diagram explaining the hierarchy of KSPEC-GFA.
+
 ![img](./docs/sphinx/source/_static/kspec-gfa_software_architecture.png)
