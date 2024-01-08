@@ -13,18 +13,14 @@ Introduction
 Installation
 -------------
 
-`kspec-gfa` can be installed using by cloning this repository
+``kspec-gfa`` can be installed using by cloning this repository ::
 
-```
-git clone https://mmingyeong@bitbucket.org/mmmingyeong/kspec-gfa.git
-```
+  git clone https://mmingyeong@bitbucket.org/mmmingyeong/kspec-gfa.git
 
-The preferred installation for development is using [poetry](https://python-poetry.org/)
-
-```
-cd kspec-gfa
-poetry install
-```
+The preferred installation for development is using [poetry](https://python-poetry.org/) ::
+  
+  cd kspec-gfa
+  poetry install
 
 Hardware Components
 -------------------
