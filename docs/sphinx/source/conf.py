@@ -6,7 +6,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
+sys.path.insert(0, os.path.abspath('../../..')) # docs/sphinx/source/conf.py 인 경우
+# 만약 경로 못찾는다 나오면 아래와 같이 풀경로 넣어야함
+sys.path.insert(0, os.path.abspath('/home/kspec/mingyeong/kspec-gfa'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
