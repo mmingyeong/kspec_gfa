@@ -10,6 +10,7 @@ Welcome to kspec-gfa's documentation!
   :caption: Contents
 
   getting-started
+  modules
 
 .. toctree::
   :caption: Development
