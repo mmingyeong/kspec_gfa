@@ -14,7 +14,7 @@ import pypylon.pylon as py
 import yaml
 
 from .gfa_config import gfa_config
-from .gfa_log import gfa_logger
+from .gfa_logger import gfa_logger
 
 __all__ = ["gfa_guiding"]
 

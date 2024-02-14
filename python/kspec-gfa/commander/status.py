@@ -8,13 +8,15 @@
 
 import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 import time
 
 import click
 from controller.gfa_controller import gfa_controller
+from controller.gfa_logger import gfa_logger
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+logger = gfa_logger(__file__)
+config_path = "../etc/cameras.yml"
 
 
 @click.command()
@@ -22,19 +24,22 @@ from controller.gfa_controller import gfa_controller
     "-n", "--num", type=click.INT, required=False, default=0, show_default=True
 )
 def status(num: int):
-    """Returns the camera status."""
+    """Returns the camera status.
+
+    Parameters
+    ----------
+    n, num
+        KSPEC GFA Camera Number to use
+    """
 
     now1 = time.time()
-    lt = time.localtime(now1)
-    formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
 
-    controller = gfa_controller("controller")
+    controller = gfa_controller("controller", config_path, logger)
     status = controller.status(num)
-    click.echo(status)
+    for k, v in status.items():
+        click.echo("{} : {}".format(k, v))
 
     now2 = time.time()
-    lt = time.localtime(now2)
-    formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
     print("process time:", now2 - now1)
 
 

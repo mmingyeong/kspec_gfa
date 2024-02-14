@@ -11,3 +11,13 @@ Version 0.2.0
     - poetry update for dependency management
     - Sphinx update for documentaiton
     - README update
+
+Version 0.3.0
+    - Date 2024-02-14
+    - Add descriptive comments to classes and functions
+    - Add the function and command ping()
+    - update gfa_logger: logging system
+    - update gfa_exceptions: exception handling system
+    - Apply logging system to gfa_controller and gfa_config
+    - Apply exception handling to gfa_controller and gfa_config
+    - Sphinx update for KSPEC logo

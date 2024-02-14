@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # @Author: Mingyeong Yang (mmingyeong@kasi.re.kr)
-# @Date: 2023-01-04
-# @Filename: guiding.py
+# @Date: 2023-02-14
+# @Filename: ping.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import os
@@ -15,37 +15,31 @@ from controller.gfa_controller import gfa_controller
 from controller.gfa_logger import gfa_logger
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 logger = gfa_logger(__file__)
 config_path = "../etc/cameras.yml"
 
 
 @click.command()
-@click.option("-n", "--num", type=click.INT, required=True, show_default=True)
 @click.option(
-    "-e", "--exp", type=click.FLOAT, required=False, default=1, show_default=True
-)  # default = 1 sec
-def grab(num: int, exp):
-    """Grab one image for each camera.
+    "-n", "--num", type=click.INT, required=False, default=0, show_default=True
+)
+def ping(num: int):
+    """Returns the Network status.
 
     Parameters
     ----------
     n, num
         KSPEC GFA Camera Number to use
-    e, exp
-        Exposure Time to grab
     """
+
     now1 = time.time()
 
     controller = gfa_controller("controller", config_path, logger)
-    ready = controller.ready(num)
-    controller.open(ready)
-    controller.grab(ready, num, exp)
-    controller.close(ready)
+    controller.ping(num)
 
     now2 = time.time()
     print("process time:", now2 - now1)
 
 
 if __name__ == "__main__":
-    grab()
+    ping()

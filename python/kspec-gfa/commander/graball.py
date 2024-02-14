@@ -8,13 +8,13 @@
 
 import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 import time
 
 import click
 from controller.gfa_controller import gfa_controller
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+config_path = "../etc/cameras.yml"
 
 
 @click.command()
@@ -22,11 +22,16 @@ from controller.gfa_controller import gfa_controller
     "-e", "--exp", type=click.FLOAT, required=False, default=1, show_default=True
 )  # default = 1 sec
 def graball(exp):
-    now1 = time.time()
-    lt = time.localtime(now1)
-    formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
+    """Grab images for all camera.
 
-    controller = gfa_controller("controller")
+    Parameters
+    ----------
+    e, exp
+        Exposure Time to grab
+    """
+    now1 = time.time()
+
+    controller = gfa_controller("controller", config_path)
     for i in range(len(controller.camera_list)):
         num = i + 1
         ready = controller.ready(num)
@@ -35,8 +40,6 @@ def graball(exp):
         controller.close(ready)
 
     now2 = time.time()
-    lt = time.localtime(now2)
-    formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
     print("process time:", now2 - now1)
 
 
