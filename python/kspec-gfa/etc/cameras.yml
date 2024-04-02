@@ -10,14 +10,14 @@ GfaController:
                     Number: 1
                     ModelName: "a2A5328-4gmPRO"
                     SerialNumber: 40103667 
-                    IpAddress: 192.168.5.33
+                    IpAddress: 192.168.3.3
                     SubnetMask: 255.255.255.0
                 Cam2:
                     Name: "GFA Camera 2"
                     Number: 2
                     ModelName: "a2A5328-4gmPRO"
                     SerialNumber: 40103831 
-                    IpAddress: 192.168.10.3
+                    IpAddress: 192.168.5.3
                     SubnetMask: 255.255.255.0
                 Cam3:
                     Name: "GFA Camera 3"
@@ -33,13 +33,13 @@ GfaController:
                     SerialNumber: 40103834 
                     IpAddress: 192.168.9.3
                     SubnetMask: 255.255.255.0
-                #Cam5:
-                #    Name: "GFA Camera 5"
-                #    Number: 5
-                #    ModelName: "a2A5328-4gmPRO"
-                #    SerialNumber: 0
-                #    IpAddress: 0
-                #    SubnetMask: 255.255.255.0
+                Cam5:
+                    Name: "GFA Camera 5"
+                    Number: 5
+                    ModelName: "a2A5328-4gmPRO"
+                    SerialNumber: 0
+                    IpAddress: 192.168.16.3
+                    SubnetMask: 255.255.255.0
                 #Cam6:
                 #    Name: "GFA Camera 6"
                 #    Number: 6

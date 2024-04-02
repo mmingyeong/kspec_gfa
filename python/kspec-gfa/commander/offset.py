@@ -11,9 +11,10 @@ import sys
 import time
 
 import click
-from controller.gfa_guiding import gfa_guiding
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from controller.gfa_logger import gfa_logger
+
 config_path = "../etc/cameras.yml"
 
 

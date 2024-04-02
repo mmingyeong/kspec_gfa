@@ -24,23 +24,25 @@ class gfa_logger:
     def __init__(self, file):
         self.logger = logging.getLogger("gfa_logger")
         self.file_name = os.path.basename(file)
+        self.logger.setLevel(logging.INFO) # should be changed ERROR later
 
-        if len(self.logger.handlers) == 0:
-            # StreamHandler
-            formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-            stream_handler = logging.StreamHandler()
-            stream_handler.setFormatter(formatter)
-            stream_handler.setLevel(logging.ERROR)
+        # StreamHandler
+        formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel(logging.INFO)
 
-            self.logger.addHandler(stream_handler)
+        stream_handler.setLevel(logging.INFO)
+        self.logger.addHandler(stream_handler)
 
-            # FileHandler
-            log_name = self.file_name.rstrip(".py")
-            file_handler = logging.FileHandler(f"./log/{log_name}.log")
-            file_handler.setFormatter(formatter)
-            file_handler.setLevel(logging.INFO)
+        # FileHandler
+        log_name = self.file_name.rstrip(".py")
+        file_handler = logging.FileHandler(f"./log/{log_name}.log")
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(logging.INFO)
 
-            self.logger.addHandler(file_handler)
+        file_handler.setLevel(logging.INFO)
+        self.logger.addHandler(file_handler)
 
     def info(self, value):
         self.logger.info("%s (at %s)" % (str(value), self.file_name))

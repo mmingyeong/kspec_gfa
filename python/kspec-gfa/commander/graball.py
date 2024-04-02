@@ -11,9 +11,12 @@ import sys
 import time
 
 import click
-from controller.gfa_controller import gfa_controller
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from controller.gfa_controller import gfa_controller
+from controller.gfa_logger import gfa_logger
+
+logger = gfa_logger(__file__)
 config_path = "../etc/cameras.yml"
 
 
@@ -31,7 +34,7 @@ def graball(exp):
     """
     now1 = time.time()
 
-    controller = gfa_controller("controller", config_path)
+    controller = gfa_controller("controller", config_path, logger)
     for i in range(len(controller.camera_list)):
         num = i + 1
         ready = controller.ready(num)

@@ -11,33 +11,34 @@ import sys
 import time
 
 import click
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from controller.gfa_controller import gfa_controller
 from controller.gfa_logger import gfa_logger
 
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 logger = gfa_logger(__file__)
 config_path = "../etc/cameras.yml"
 
 
 @click.command()
-@click.option(
-    "-n", "--num", type=click.INT, required=False, default=0, show_default=True
-)
+@click.argument("num", required=True, type=click.INT, nargs=-1)
 def status(num: int):
     """Returns the camera status.
 
     Parameters
     ----------
-    n, num
-        KSPEC GFA Camera Number to use
+    num
+        KSPEC GFA Camera Number to use; 0 = all
     """
 
     now1 = time.time()
 
-    controller = gfa_controller("controller", config_path, logger)
-    status = controller.status(num)
-    for k, v in status.items():
-        click.echo("{} : {}".format(k, v))
+    for n in num:
+        controller = gfa_controller("controller", config_path, logger)
+        status = controller.status(n)
+
+        for k, v in status.items():
+            click.echo("{} : {}".format(k, v))
 
     now2 = time.time()
     print("process time:", now2 - now1)

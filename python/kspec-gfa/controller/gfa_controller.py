@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import pypylon.pylon as py
 
 from .gfa_config import gfa_config
+from .gfa_logger import gfa_logger
 from .gfa_exceptions import GFACamNumError, GFAConfigError, GFAError, GFAPingError
 
 __all__ = ["gfa_controller"]
@@ -33,9 +34,12 @@ class gfa_controller:
         The logger for logging
     """
 
-    def __init__(self, name: str, config: str, logger):
+    def __init__(self, name: str, config: str, logger: gfa_logger):
         self.name = name
         self.logger = logger
+
+        now1 = time.time()
+        self.logger.info("Class start")
 
         try:
             config = gfa_config(self.name, config, logger).from_config()
@@ -49,7 +53,15 @@ class gfa_controller:
         self.tlf = py.TlFactory.GetInstance()
         self.tl = self.tlf.CreateTl("BaslerGigE")
 
+        now2 = time.time()
+        self.logger.info("Class init done")
+        self.logger.info(f"process time: {now2-now1}")
+
     def ping(self, CamNum=0):
+        
+        now1 = time.time()
+        self.logger.info("Func ping start")
+        
         if not CamNum == 0:
             try:
                 Cam_name = self.cameras_info[f"Cam{CamNum}"]["Name"]
@@ -71,21 +83,23 @@ class gfa_controller:
                 self.logger.error("No ping")
                 raise GFAPingError("No ping")
 
+        now2 = time.time()
+        self.logger.info("Func ping done")
+        self.logger.info(f"process time: {now2-now1}")
+
         return ping_test
 
-    def status(self, CamNum=0):
+    def status(self, CamNum):
         """Return connection status of the camera
 
         Parameters
         ----------
         CamNum
-            default=0; Camera number
+            Camera number
         """
 
         now1 = time.time()
-        lt = time.localtime(now1)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        self.logger.info(f"Func start {formatted}")
+        self.logger.info("Func status start")
 
         status_result = {}
         if not CamNum == 0:
@@ -112,12 +126,11 @@ class gfa_controller:
                     raise GFAError("No Camera")
 
         now2 = time.time()
-        lt = time.localtime(now2)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        self.logger.info(f"Func done {formatted}")
+        self.logger.info("Func status done")
         self.logger.info(f"process time: {now2-now1}")
 
         return status_result
+
 
     def ready(self, CamNum: int):
         """ready to open and close
@@ -129,10 +142,7 @@ class gfa_controller:
         """
 
         now1 = time.time()
-        lt = time.localtime(now1)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-
-        self.logger.info(f"Func start {formatted}")
+        self.logger.info("Func ready start")
         cam_ready_dict = {}
 
         try:
@@ -160,9 +170,7 @@ class gfa_controller:
             raise GFACamNumError(f"No Camera {CamNum}")
 
         now2 = time.time()
-        lt = time.localtime(now2)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        self.logger.info(f"Func done {formatted}")
+        self.logger.info("Func ready done")
         self.logger.info(f"process time: {now2-now1}")
 
         return cam_ready
@@ -177,10 +185,7 @@ class gfa_controller:
         """
 
         now1 = time.time()
-        lt = time.localtime(now1)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-
-        self.logger.info(f"Func start {formatted}")
+        self.logger.info("Func open start")
 
         if ready:
             ready.Open()
@@ -189,9 +194,7 @@ class gfa_controller:
             raise GFAError("No Camera for Open")
 
         now2 = time.time()
-        lt = time.localtime(now2)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        self.logger.info(f"Func done {formatted}")
+        self.logger.info("Func open done")
         self.logger.info(f"process time: {now2-now1}")
 
     def close(self, ready):
@@ -204,10 +207,7 @@ class gfa_controller:
         """
 
         now1 = time.time()
-        lt = time.localtime(now1)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-
-        self.logger.info(f"Func start {formatted}")
+        self.logger.info("Func close start")
 
         if ready:
             ready.Close()
@@ -216,9 +216,7 @@ class gfa_controller:
             raise GFAError("No Camera for Close")
 
         now2 = time.time()
-        lt = time.localtime(now2)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-        self.logger.info(f"Func done {formatted}")
+        self.logger.info("Func close done")
         self.logger.info(f"process time: {now2-now1}")
 
     def grab(self, ready, CamNum, ExpTime):
@@ -233,11 +231,10 @@ class gfa_controller:
         ExpTime
             Exposure time (sec)
         """
+        
         now1 = time.time()
-        lt = time.localtime(now1)
-        formatted = time.strftime("%Y-%m-%d_%H:%M:%S", lt)
-
-        self.logger.info(f"Func start {formatted}")
+        self.logger.info("Func grab start")
+        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
 
         if ready:
             cam = ready
@@ -252,9 +249,6 @@ class gfa_controller:
             raise GFAError("No Camera for grab")
 
         now2 = time.time()
-        lt = time.localtime(now2)
-        formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
-
-        self.logger.info(f"Func done {formatted}")
+        self.logger.info("Func grab done")
         self.logger.info(f"Exposure time: {ExpTime}")
         self.logger.info(f"process time: {now2-now1}")

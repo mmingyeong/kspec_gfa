@@ -11,20 +11,31 @@ import sys
 import time
 
 import click
-from controller.gfa_controller import gfa_controller
-from controller.gfa_logger import gfa_logger
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from controller.gfa_controller import gfa_controller
+from controller.gfa_logger import gfa_logger
 
 logger = gfa_logger(__file__)
 config_path = "../etc/cameras.yml"
 
 
 @click.command()
-@click.option("-n", "--num", type=click.INT, required=True, show_default=True)
 @click.option(
-    "-e", "--exp", type=click.FLOAT, required=False, default=1, show_default=True
-)  # default = 1 sec
+    "-n",
+    "--num",
+    type=click.INT,
+    required=True,
+    show_default=True,
+)
+@click.option(
+    "-e",
+    "--exp",
+    type=click.FLOAT,
+    required=False,
+    default=1,
+    show_default=True,
+)  # default = 1 sec should be changed after field test
 def grab(num: int, exp):
     """Grab one image for each camera.
 

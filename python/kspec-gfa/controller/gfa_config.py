@@ -51,7 +51,6 @@ class gfa_config:
         with open(self.config) as f:
             film = yaml.load(f, Loader=yaml.FullLoader)
 
-        self.logger.info(f"{film}")
         self.logger.info(f"return {self.config}")
 
         return film
