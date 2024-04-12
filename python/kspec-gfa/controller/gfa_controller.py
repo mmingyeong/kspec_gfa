@@ -234,6 +234,7 @@ class gfa_controller:
         
         now1 = time.time()
         self.logger.info("Func grab start")
+        lt = time.localtime(now1)
         formatted = time.strftime("%Y-%m-%d %H:%M:%S", lt)
 
         if ready:
